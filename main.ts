@@ -9,14 +9,14 @@ const args = process.argv.slice(1),
 function createWindow(): BrowserWindow {
 
   const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  // const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: size.width,
-    height: size.height,
+    width: 1920,
+    height: 1080,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
@@ -59,6 +59,8 @@ try {
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => setTimeout(createWindow, 400));
+
+  app.allowRendererProcessReuse = false;
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {

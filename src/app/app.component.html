@@ -1,1 +1,24 @@
-<router-outlet></router-outlet>
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="javascript:;"><img src="assets/icons/favicon.png" height="24" class="d-inline-block align-top"> VJMS</a>
+    <span class="d-flex">
+      <button class="btn" (click)="panic()"><i-bs name="exclamation-circle-fill"></i-bs></button>
+      <button class="btn" (click)="openSettings()"><i-bs name="gear-fill"></i-bs></button>
+    </span>
+  </div>
+</nav>
+
+<div class="row">
+  <div class="col-sm">
+    <app-transport></app-transport>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm">
+    <app-scenes></app-scenes>
+  </div>
+  <div class="col-sm">
+    <app-effects></app-effects>
+  </div>
+</div>
+

@@ -1,0 +1,17 @@
+<div>
+<label for="bpm" class="form-label">BPM</label>
+<input min="0" max="1024" type="number" id="bpm" [formControl]="state.bpm">
+
+  <label for="beats" class="form-label">Bars</label>
+  <input min="0" max="1024" type="number" id="beats" [formControl]="state.bars">
+
+  <button *ngIf="state.playing" (click)="transport.playToggle()" class="btn"><i-bs name="pause-fill"></i-bs></button>
+  <button *ngIf="!state.playing" (click)="transport.playToggle()" class="btn"><i-bs name="play-fill"></i-bs></button>
+
+  <button (click)="transport.restart()" class="btn"><i-bs name="bootstrap-reboot"></i-bs></button>
+  <button (click)="transport.nextNote()" class="btn"><i-bs name="forward-fill"></i-bs></button>
+  <button (click)="state.repeat = !state.repeat" class="btn" [class.btn-primary]="state.repeat"><i-bs name="arrow-repeat"></i-bs></button>
+
+<!--  <ngb-progressbar type="success" [value]="transport.currentBar" [max]="state.bars.value"></ngb-progressbar>-->
+
+</div>

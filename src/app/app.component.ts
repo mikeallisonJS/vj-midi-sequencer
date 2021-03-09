@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import { ElectronService } from './core/services';
-import { TranslateService } from '@ngx-translate/core';
 import { AppConfig } from '../environments/environment';
+import {ElectronService} from "./electron.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {SettingsComponent} from "./settings/settings.component";
+import {StateService} from "./state.service";
+import {MidiService} from "./midi.service";
 
 @Component({
   selector: 'app-root',
@@ -9,11 +12,7 @@ import { AppConfig } from '../environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(
-    private electronService: ElectronService,
-    private translate: TranslateService
-  ) {
-    this.translate.setDefaultLang('en');
+  constructor(private electronService: ElectronService, private modalService: NgbModal, private state: StateService, private midi: MidiService) {
     console.log('AppConfig', AppConfig);
 
     if (electronService.isElectron) {
@@ -24,5 +23,14 @@ export class AppComponent {
     } else {
       console.log('Run in browser');
     }
+  }
+  openSettings(): void {
+    const modalRef = this.modalService.open(SettingsComponent);
+    modalRef.componentInstance.name = 'World';
+  }
+  panic() {
+    this.midi.reset();
+    this.midi.playNote(0, 15);
+    this.state.playing = false;
   }
 }

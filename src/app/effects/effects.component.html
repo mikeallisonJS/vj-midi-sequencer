@@ -1,0 +1,10 @@
+<h1>Effects</h1>
+<table class="table">
+  <tbody>
+  <ng-container *ngFor="let effect of effectStates; index as i">
+  <tr [class.table-primary]="effect" (click)="toggle(i)">
+    <td>{{ i + 1 }}</td>
+  </tr>
+  </ng-container>
+  </tbody>
+</table>

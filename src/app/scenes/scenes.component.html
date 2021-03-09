@@ -1,0 +1,27 @@
+<h1>Scenes</h1>
+<label for="startRange" class="form-label">Start Note</label>
+<select [formControl]="state.minNote" id="startRange">
+  <option *ngFor="let note of midi.notesArray; index as i" [value]="i">{{note}}</option>
+</select>
+
+<label for="endRange" class="form-label">End Note</label>
+<select [formControl]="state.maxNote" id="endRange">
+  <option *ngFor="let note of midi.notesArray; index as i" [value]="i">{{note}}</option>
+</select>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>MIDI</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+  <ng-container *ngFor="let note of midi.notesArray; index as i">
+    <tr *ngIf="i >= state.minNote.value && i <= state.maxNote.value" [class.table-primary]="i == state.activeScene" (click)="setActive(i)">
+      <td>{{ i }}</td>
+      <td>{{ note }}</td>
+    </tr>
+  </ng-container>
+  </tbody>
+</table>

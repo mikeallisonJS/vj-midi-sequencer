@@ -1,44 +1,43 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
-
-import { AppRoutingModule } from './app-routing.module';
-
-// NG Translate
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-import { HomeModule } from './home/home.module';
-import { DetailModule } from './detail/detail.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { AppComponent } from './app.component';
+import {ScenesComponent} from "./scenes/scenes.component";
+import {TransportComponent} from "./transport/transport.component";
+import {EffectsComponent} from "./effects/effects.component";
+import {
+  NgxBootstrapIconsModule,
+  pauseFill,
+  playFill,
+  bootstrapReboot,
+  forwardFill,
+  gearFill,
+  exclamationCircleFill,
+  arrowRepeat
+} from 'ngx-bootstrap-icons';
+import {NgbModule, NgbProgressbarModule} from "@ng-bootstrap/ng-bootstrap";
+import { SettingsComponent } from './settings/settings.component';
+import { LayersComponent } from './layers/layers.component';
 
-// AoT requires an exported function for factories
-export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
+const icons = { pauseFill, playFill, bootstrapReboot, forwardFill, gearFill, exclamationCircleFill, arrowRepeat};
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent,
+    ScenesComponent,
+    TransportComponent,
+    EffectsComponent,
+    SettingsComponent,
+    LayersComponent
+  ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule,
-    CoreModule,
-    SharedModule,
-    HomeModule,
-    DetailModule,
-    AppRoutingModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
+    NgbModule,
+    NgbProgressbarModule,
+    NgxBootstrapIconsModule.forRoot(icons),
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
