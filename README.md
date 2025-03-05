@@ -1,133 +1,82 @@
-[![Angular Logo](https://www.vectorlogo.zone/logos/angular/angular-icon.svg)](https://angular.io/) [![Electron Logo](https://www.vectorlogo.zone/logos/electronjs/electronjs-icon.svg)](https://electronjs.org/)
+# VJ MIDI Sequencer
 
-![Maintained][maintained-badge]
-[![Make a pull request][prs-badge]][prs]
-[![License][license-badge]](LICENSE.md)
+A MIDI sequencer for VJ software, migrated from Angular to React Native.
 
-[![Linux Build][linux-build-badge]][linux-build]
-[![MacOS Build][macos-build-badge]][macos-build]
-[![Windows Build][windows-build-badge]][windows-build]
+## Overview
 
-[![Watch on GitHub][github-watch-badge]][github-watch]
-[![Star on GitHub][github-star-badge]][github-star]
-[![Tweet][twitter-badge]][twitter]
+VJ MIDI Sequencer is a tool designed for VJs (Visual Jockeys) to control their visual software using MIDI signals. It provides a sequencer interface that allows for triggering scenes and effects in sync with music.
 
-# Introduction
+## Features
 
-Bootstrap and package your project with Angular 11 and Electron 11 (Typescript + SASS + Hot Reload) for creating Desktop applications.
-
-Currently runs with:
-
-- Angular v11.2.0
-- Electron v11.2.3
-- Electron Builder v22.9.1
-
-With this sample, you can:
-
-- Run your app in a local development environment with Electron & Hot reload
-- Run your app in a production environment
-- Package your app into an executable file for Linux, Windows & Mac
-
-/!\ Hot reload only pertains to the renderer process. The main electron process is not able to be hot reloaded, only restarted.
-
-/!\ Angular 11.x CLI needs Node 10.13 or later to work correctly.
+- MIDI sequencing with adjustable BPM and bar length
+- Scene selection and triggering
+- Effects control across multiple MIDI channels
+- Configurable MIDI input and output ports
+- Transport controls (play, stop, reset)
 
 ## Getting Started
 
-Clone this repository locally:
+### Prerequisites
 
-``` bash
-git clone https://github.com/maximegris/angular-electron.git
+- Node.js
+- For iOS: Xcode
+- For Android: Android Studio
+
+### Installation
+
+1. Clone the repository:
+
+```
+git clone https://github.com/yourusername/vj-midi-sequencer.git
+cd vj-midi-sequencer
 ```
 
-Install dependencies with npm:
+2. Install dependencies:
 
-``` bash
+```
 npm install
 ```
 
-There is an issue with `yarn` and `node_modules` when the application is built by the packager. Please use `npm` as dependencies manager.
+3. Start the development server:
 
-
-If you want to generate Angular components with Angular-cli , you **MUST** install `@angular/cli` in npm global context.
-Please follow [Angular-cli documentation](https://github.com/angular/angular-cli) if you had installed a previous version of `angular-cli`.
-
-``` bash
-npm install -g @angular/cli
+```
+npm start
 ```
 
-## To build for development
+4. Run on your preferred platform:
 
-- **in a terminal window** -> npm start
+```
+npm run ios
+# or
+npm run android
+# or
+npm run web
+```
 
-Voila! You can use your Angular + Electron app in a local development environment with hot reload!
+## MIDI Implementation
 
-The application code is managed by `main.ts`. In this sample, the app runs with a simple Angular App (http://localhost:4200) and an Electron window.
-The Angular component contains an example of Electron and NodeJS native lib import.
-You can disable "Developer Tools" by commenting `win.webContents.openDevTools();` in `main.ts`.
+The MIDI implementation in React Native differs from the original Angular/Electron version. This version uses the `react-native-midi` library for MIDI functionality.
 
-## Use Electron / NodeJS / 3rd party libraries
+### Limitations
 
-This sample project runs in both modes (web and electron). To make this work, **you have to import your dependencies the right way**. Please check `providers/electron.service.ts` to watch how conditional import of libraries has to be done when using electron / NodeJS / 3rd party libraries in renderer context (i.e. Angular).
+- Mobile MIDI support may require additional hardware or adapters
+- Not all MIDI features may be available on all platforms
+- Web implementation may have limited MIDI support depending on the browser
 
-## Browser mode
+## Migration Notes
 
-Maybe you only want to execute the application in the browser with hot reload? Just run `npm run ng:serve:web`.
+This project was migrated from an Angular/Electron application to React Native. The key changes include:
 
-## Included Commands
+- Replaced Angular services with React context and hooks
+- Converted Angular components to React Native components
+- Adapted MIDI implementation for cross-platform support
+- Redesigned UI for mobile-first experience
 
-|Command|Description|
-|--|--|
-|`npm run ng:serve`| Execute the app in the browser |
-|`npm run build`| Build the app. Your built files are in the /dist folder. |
-|`npm run build:prod`| Build the app with Angular aot. Your built files are in the /dist folder. |
-|`npm run electron:local`| Builds your application and start electron
-|`npm run electron:build`| Builds your application and creates an app consumable based on your operating system |
+## License
 
-**Your application is optimised. Only /dist folder and node dependencies are included in the executable.**
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## You want to use a specific lib (like rxjs) in electron main thread ?
+## Acknowledgments
 
-YES! You can do it! Just by importing your library in npm dependencies section (not **devDependencies**) with `npm install --save`. It will be loaded by electron during build phase and added to your final package. Then use your library by importing it in `main.ts` file. Quite simple, isn't it?
-
-## E2E Testing
-
-E2E Test scripts can be found in `e2e` folder.
-
-|Command|Description|
-|--|--|
-|`npm run e2e`| Execute end to end tests |
-
-Note: To make it work behind a proxy, you can add this proxy exception in your terminal  
-`export {no_proxy,NO_PROXY}="127.0.0.1,localhost"`
-
-## Branch & Packages version
-
-- Angular 4 & Electron 1 : Branch [angular4](https://github.com/maximegris/angular-electron/tree/angular4)
-- Angular 5 & Electron 1 : Branch [angular5](https://github.com/maximegris/angular-electron/tree/angular5)
-- Angular 6 & Electron 3 : Branch [angular6](https://github.com/maximegris/angular-electron/tree/angular6)
-- Angular 7 & Electron 3 : Branch [angular7](https://github.com/maximegris/angular-electron/tree/angular7)
-- Angular 8 & Electron 7 : Branch [angular8](https://github.com/maximegris/angular-electron/tree/angular8)
-- Angular 9 & Electron 7 : Branch [angular9](https://github.com/maximegris/angular-electron/tree/angular9)
-- Angular 10 & Electron 9 : Branch [angular10](https://github.com/maximegris/angular-electron/tree/angular10)
-- Angular 11 & Electron 10 : (master)
-
-[maintained-badge]: https://img.shields.io/badge/maintained-yes-brightgreen
-[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license]: https://github.com/maximegris/angular-electron/blob/master/LICENSE.md
-[prs-badge]: https://img.shields.io/badge/PRs-welcome-red.svg
-[prs]: http://makeapullrequest.com
-
-[linux-build-badge]: https://github.com/maximegris/angular-electron/workflows/Linux%20Build/badge.svg
-[linux-build]: https://github.com/maximegris/angular-electron/actions?query=workflow%3A%22Linux+Build%22
-[macos-build-badge]: https://github.com/maximegris/angular-electron/workflows/MacOS%20Build/badge.svg
-[macos-build]: https://github.com/maximegris/angular-electron/actions?query=workflow%3A%22MacOS+Build%22
-[windows-build-badge]: https://github.com/maximegris/angular-electron/workflows/Windows%20Build/badge.svg
-[windows-build]: https://github.com/maximegris/angular-electron/actions?query=workflow%3A%22Windows+Build%22
-
-[github-watch-badge]: https://img.shields.io/github/watchers/maximegris/angular-electron.svg?style=social
-[github-watch]: https://github.com/maximegris/angular-electron/watchers
-[github-star-badge]: https://img.shields.io/github/stars/maximegris/angular-electron.svg?style=social
-[github-star]: https://github.com/maximegris/angular-electron/stargazers
-[twitter]: https://twitter.com/intent/tweet?text=Check%20out%20angular-electron!%20https://github.com/maximegris/angular-electron%20%F0%9F%91%8D
-[twitter-badge]: https://img.shields.io/twitter/url/https/github.com/maximegris/angular-electron.svg?style=social
+- Original Angular version by Mike Allison
+- MIDI implementation based on the WebMIDI API and react-native-midi

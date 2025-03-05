@@ -1,49 +1,37 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# compiled output
-/dist
-/tmp
-/out-tsc
-/app-builds
-/release
-main.js
-src/**/*.js
-!src/karma.conf.js
-*.js.map
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
-/node_modules
+node_modules/
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# Expo
+.expo/
+dist/
+web-build/
 
-# IDE - VSCode
-.vscode/*
-.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-testem.log
-/typings
+# Metro
+.metro-health-check*
 
-# e2e
-/e2e/*.js
-!/e2e/protractor.conf.js
-/e2e/*.map
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
 
-# System Files
+# macOS
 .DS_Store
-Thumbs.db
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+app-example
