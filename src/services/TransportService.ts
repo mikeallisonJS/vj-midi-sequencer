@@ -95,13 +95,14 @@ export class TransportService {
         // Increment the overall bar counter for scene progression
         this.barCounter++;
         console.log(
-          `Bar counter: ${this.barCounter}, Bars per scene: ${state.bars}`
+          `Bar counter: ${this.barCounter}, Bars per scene: ${state.bars}`,
         );
 
         // Check if we need to progress to the next scene
+        // The key fix: We need to check if we've completed a full cycle of bars
         if (this.barCounter >= state.bars) {
-          this.barCounter = 0;
-          this.progressScene(state);
+          this.barCounter = 0; // Reset bar counter
+          this.progressScene(state); // Progress to next scene
         }
 
         // Play note at the start of each bar
@@ -130,6 +131,9 @@ export class TransportService {
       if (state.repeat) {
         state.setActiveScene(state.minNote);
         console.log(`Looping back to scene: ${state.minNote}`);
+      } else {
+        // If repeat is off, we still need to stay at the max note
+        console.log(`Reached max scene: ${state.activeScene}, repeat is off`);
       }
     } else {
       // Move to the next scene

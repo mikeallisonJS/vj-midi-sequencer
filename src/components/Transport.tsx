@@ -66,6 +66,16 @@ export const Transport: React.FC = () => {
     };
   }, [transportService]);
 
+  // Log when active scene changes
+  useEffect(() => {
+    console.log("Active scene changed to:", state.activeScene);
+  }, [state.activeScene]);
+
+  // Log when bars setting changes
+  useEffect(() => {
+    console.log("Bars setting changed to:", state.bars);
+  }, [state.bars]);
+
   // Set up the blinking animation based on BPM
   useEffect(() => {
     let blinkInterval: NodeJS.Timeout | null = null;
@@ -117,7 +127,7 @@ export const Transport: React.FC = () => {
     setter: React.Dispatch<React.SetStateAction<string>>,
     stateSetter: (value: number) => void,
     min: number,
-    max: number
+    max: number,
   ) => {
     // Allow empty string during typing
     if (value === "") {
@@ -146,7 +156,7 @@ export const Transport: React.FC = () => {
     stateSetter: (value: number) => void,
     currentValue: number,
     min: number,
-    max: number
+    max: number,
   ) => {
     // If empty or invalid, reset to current value
     if (value === "" || !/^\d+$/.test(value)) {
@@ -212,7 +222,7 @@ export const Transport: React.FC = () => {
               );
             })}
           </View>
-        </View>
+        </View>,
       );
     }
     return indicators;
@@ -303,7 +313,7 @@ export const Transport: React.FC = () => {
               state.setBpm,
               state.bpm,
               1,
-              300
+              300,
             )
           }
           keyboardType="numeric"
@@ -339,7 +349,7 @@ export const Transport: React.FC = () => {
               state.setBars,
               state.bars,
               1,
-              64
+              64,
             )
           }
           keyboardType="numeric"
@@ -374,7 +384,7 @@ export const Transport: React.FC = () => {
               setMinNoteInput,
               state.setMinNote,
               0,
-              state.maxNote - 1
+              state.maxNote - 1,
             )
           }
           onBlur={() =>
@@ -384,7 +394,7 @@ export const Transport: React.FC = () => {
               state.setMinNote,
               state.minNote,
               0,
-              state.maxNote - 1
+              state.maxNote - 1,
             )
           }
           keyboardType="numeric"
@@ -420,7 +430,7 @@ export const Transport: React.FC = () => {
               setMaxNoteInput,
               state.setMaxNote,
               state.minNote + 1,
-              127
+              127,
             )
           }
           onBlur={() =>
@@ -430,7 +440,7 @@ export const Transport: React.FC = () => {
               state.setMaxNote,
               state.maxNote,
               state.minNote + 1,
-              127
+              127,
             )
           }
           keyboardType="numeric"
