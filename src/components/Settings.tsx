@@ -1,5 +1,5 @@
-import type React from 'react';
-import { useState } from 'react';
+import type React from 'react'
+import { useState } from 'react'
 import {
   Modal,
   ScrollView,
@@ -8,27 +8,27 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { MidiService } from '../services/MidiService';
-import { useStore } from '../store/useStore';
+} from 'react-native'
+import { MidiService } from '../services/MidiService'
+import { useStore } from '../store/useStore'
 
 interface SettingsProps {
-  visible: boolean;
-  onClose: () => void;
+  visible: boolean
+  onClose: () => void
 }
 
 export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
-  const state = useStore();
-  const [midiService] = useState(() => new MidiService());
-  const [midiInPort, setMidiInPort] = useState(state.midiInPort);
-  const [midiOutPort, setMidiOutPort] = useState(state.midiOutPort);
+  const state = useStore()
+  const [midiService] = useState(() => new MidiService())
+  const [midiInPort, setMidiInPort] = useState(state.midiInPort)
+  const [midiOutPort, setMidiOutPort] = useState(state.midiOutPort)
 
   const handleSave = () => {
-    state.setMidiInPort(midiInPort);
-    state.setMidiOutPort(midiOutPort);
-    midiService.changeOutputPort(midiOutPort);
-    onClose();
-  };
+    state.setMidiInPort(midiInPort.length > 0 ? midiInPort : null)
+    state.setMidiOutPort(midiOutPort.length > 0 ? midiOutPort : null)
+    midiService.changeOutputPort(midiOutPort)
+    onClose()
+  }
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
@@ -41,7 +41,7 @@ export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
               <Text style={styles.label}>MIDI Input Port:</Text>
               <TextInput
                 style={styles.input}
-                value={midiInPort}
+                value={midiInPort ?? ''}
                 onChangeText={setMidiInPort}
                 placeholder="Enter MIDI input port"
               />
@@ -51,7 +51,7 @@ export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
               <Text style={styles.label}>MIDI Output Port:</Text>
               <TextInput
                 style={styles.input}
-                value={midiOutPort}
+                value={midiOutPort ?? ''}
                 onChangeText={setMidiOutPort}
                 placeholder="Enter MIDI output port"
               />
@@ -71,8 +71,8 @@ export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
         </View>
       </View>
     </Modal>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-});
+})

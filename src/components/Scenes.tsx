@@ -1,33 +1,33 @@
-import type React from 'react';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { MidiService, buildNoteList } from '../services/MidiService';
-import { useStore } from '../store/useStore';
+import type React from 'react'
+import { useState } from 'react'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { MidiService, buildNoteList } from '../services/MidiService'
+import { useStore } from '../store/useStore'
 
 export const Scenes: React.FC = () => {
-  const state = useStore();
-  const [midiService] = useState(() => new MidiService());
-  const notesArray = buildNoteList();
+  const state = useStore()
+  const [midiService] = useState(() => new MidiService())
+  const notesArray = buildNoteList()
 
   const renderScenes = () => {
-    const scenes: React.ReactNode[] = [];
+    const scenes: React.ReactNode[] = []
     for (let i = state.minNote; i <= state.maxNote; i++) {
       scenes.push(
         <TouchableOpacity
           key={i}
           style={[styles.sceneButton, state.activeScene === i ? styles.activeScene : null]}
           onPress={() => {
-            state.setActiveScene(i);
-            midiService.playNote(i, 0);
+            state.setActiveScene(i)
+            midiService.playNote(i, 0)
           }}
         >
           <Text style={styles.sceneText}>{i}</Text>
           <Text style={styles.noteText}>{notesArray[i]}</Text>
         </TouchableOpacity>
-      );
+      )
     }
-    return scenes;
-  };
+    return scenes
+  }
 
   return (
     <View style={styles.container}>
@@ -36,8 +36,8 @@ export const Scenes: React.FC = () => {
         <View style={styles.scenesGrid}>{renderScenes()}</View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
   noteText: {
     fontSize: 12,
   },
-});
+})

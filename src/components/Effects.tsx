@@ -1,16 +1,16 @@
-import type React from 'react';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { MidiService } from '../services/MidiService';
-import { useStore } from '../store/useStore';
+import type React from 'react'
+import { useState } from 'react'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { MidiService } from '../services/MidiService'
+import { useStore } from '../store/useStore'
 
 export const Effects: React.FC = () => {
-  const state = useStore();
-  const [midiService] = useState(() => new MidiService());
+  const state = useStore()
+  const [midiService] = useState(() => new MidiService())
 
   // Create a grid of effect buttons for channels 1-15
   const renderEffects = () => {
-    const effects: React.ReactNode[] = [];
+    const effects: React.ReactNode[] = []
     // MIDI channels 1-15 (channel 0 is used for scenes)
     for (let channel = 1; channel <= 15; channel++) {
       effects.push(
@@ -19,7 +19,7 @@ export const Effects: React.FC = () => {
           <View style={styles.effectsRow}>
             {/* Create 8 effect buttons per channel */}
             {Array.from({ length: 8 }, (_, i) => {
-              const note = channel * 10 + i; // Simple mapping for demo purposes
+              const note = channel * 10 + i // Simple mapping for demo purposes
               return (
                 <TouchableOpacity
                   key={`effect-note-${note}-ch-${channel}`}
@@ -28,22 +28,22 @@ export const Effects: React.FC = () => {
                 >
                   <Text style={styles.effectText}>{i + 1}</Text>
                 </TouchableOpacity>
-              );
+              )
             })}
           </View>
         </View>
-      );
+      )
     }
-    return effects;
-  };
+    return effects
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Effects</Text>
       <ScrollView style={styles.effectsContainer}>{renderEffects()}</ScrollView>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-});
+})
