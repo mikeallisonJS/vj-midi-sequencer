@@ -1,18 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-  TextInput,
-} from "react-native";
-import { useStateContext } from "../context/StateContext";
-import { MidiService } from "../services/MidiService";
-import { TransportService } from "../services/TransportService";
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { MidiService } from '../services/MidiService';
+import { TransportService } from '../services/TransportService';
+import { useStore } from '../store/useStore';
 
 export const Transport: React.FC = () => {
-  const state = useStateContext();
+  // Use Zustand store instead of context
+  const state = useStore();
+
   const [midiService] = useState(() => new MidiService());
   const [transportService] = useState(() => new TransportService(midiService));
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -51,12 +47,12 @@ export const Transport: React.FC = () => {
   // Set up the bar and beat change listeners
   useEffect(() => {
     transportService.setBarChangeListener((bar) => {
-      console.log("Bar changed to:", bar);
+      console.log('Bar changed to:', bar);
       setCurrentBar(bar);
     });
 
     transportService.setBeatChangeListener((beat) => {
-      console.log("Beat changed to:", beat);
+      console.log('Beat changed to:', beat);
       setCurrentBeat(beat);
     });
 
@@ -68,17 +64,17 @@ export const Transport: React.FC = () => {
 
   // Log when active scene changes
   useEffect(() => {
-    console.log("Active scene changed to:", state.activeScene);
+    console.log('Active scene changed to:', state.activeScene);
   }, [state.activeScene]);
 
   // Log when bars setting changes
   useEffect(() => {
-    console.log("Bars setting changed to:", state.bars);
+    console.log('Bars setting changed to:', state.bars);
   }, [state.bars]);
 
   // Set up the blinking animation based on BPM
   useEffect(() => {
-    let blinkInterval: NodeJS.Timeout | null = null;
+    const blinkInterval: NodeJS.Timeout | null = null;
 
     if (state.playing) {
       // Calculate beat duration in milliseconds (60000ms / BPM = ms per beat)
@@ -127,10 +123,10 @@ export const Transport: React.FC = () => {
     setter: React.Dispatch<React.SetStateAction<string>>,
     stateSetter: (value: number) => void,
     min: number,
-    max: number,
+    max: number
   ) => {
     // Allow empty string during typing
-    if (value === "") {
+    if (value === '') {
       setter(value);
       return;
     }
@@ -143,8 +139,8 @@ export const Transport: React.FC = () => {
     setter(value);
 
     // Convert to number and validate range
-    const numValue = parseInt(value, 10);
-    if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+    const numValue = Number.parseInt(value, 10);
+    if (!Number.isNaN(numValue) && numValue >= min && numValue <= max) {
       stateSetter(numValue);
     }
   };
@@ -156,17 +152,17 @@ export const Transport: React.FC = () => {
     stateSetter: (value: number) => void,
     currentValue: number,
     min: number,
-    max: number,
+    max: number
   ) => {
     // If empty or invalid, reset to current value
-    if (value === "" || !/^\d+$/.test(value)) {
+    if (value === '' || !/^\d+$/.test(value)) {
       setter(currentValue.toString());
       return;
     }
 
     // Parse and validate the value
-    const numValue = parseInt(value, 10);
-    if (isNaN(numValue)) {
+    const numValue = Number.parseInt(value, 10);
+    if (Number.isNaN(numValue)) {
       setter(currentValue.toString());
     } else {
       // Clamp value to valid range
@@ -214,15 +210,13 @@ export const Transport: React.FC = () => {
                   key={`beat-${beat}`}
                   style={[
                     styles.beatIndicator,
-                    (isActiveBeat || isPastBar) && state.playing
-                      ? styles.activeBeatIndicator
-                      : {},
+                    (isActiveBeat || isPastBar) && state.playing ? styles.activeBeatIndicator : {},
                   ]}
                 />
               );
             })}
           </View>
-        </View>,
+        </View>
       );
     }
     return indicators;
@@ -230,20 +224,7 @@ export const Transport: React.FC = () => {
 
   // Get note name from MIDI note number
   const getNoteNameFromNumber = (noteNumber: number): string => {
-    const noteNames = [
-      "C",
-      "C#",
-      "D",
-      "D#",
-      "E",
-      "F",
-      "F#",
-      "G",
-      "G#",
-      "A",
-      "A#",
-      "B",
-    ];
+    const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const octave = Math.floor(noteNumber / 12) - 1;
     const noteName = noteNames[noteNumber % 12];
     return `${noteName}${octave}`;
@@ -265,21 +246,15 @@ export const Transport: React.FC = () => {
           <Text style={styles.sceneLabel}>Current Scene:</Text>
           <View style={styles.sceneValueContainer}>
             <Text style={styles.sceneValue}>{state.activeScene}</Text>
-            <Text style={styles.sceneNoteName}>
-              {getNoteNameFromNumber(state.activeScene)}
-            </Text>
+            <Text style={styles.sceneNoteName}>{getNoteNameFromNumber(state.activeScene)}</Text>
           </View>
         </View>
 
         <View>
           <Text style={styles.sceneLabel}>Next Scene:</Text>
           <View style={styles.sceneValueContainer}>
-            <Text style={[styles.sceneValue, styles.nextSceneValue]}>
-              {getNextScene()}
-            </Text>
-            <Text style={styles.sceneNoteName}>
-              {getNoteNameFromNumber(getNextScene())}
-            </Text>
+            <Text style={[styles.sceneValue, styles.nextSceneValue]}>{getNextScene()}</Text>
+            <Text style={styles.sceneNoteName}>{getNoteNameFromNumber(getNextScene())}</Text>
           </View>
         </View>
       </View>
@@ -303,27 +278,11 @@ export const Transport: React.FC = () => {
         <TextInput
           style={styles.input}
           value={bpmInput}
-          onChangeText={(value) =>
-            handleInputChange(value, setBpmInput, state.setBpm, 1, 300)
-          }
-          onBlur={() =>
-            handleInputBlur(
-              bpmInput,
-              setBpmInput,
-              state.setBpm,
-              state.bpm,
-              1,
-              300,
-            )
-          }
+          onChangeText={(value) => handleInputChange(value, setBpmInput, state.setBpm, 1, 300)}
+          onBlur={() => handleInputBlur(bpmInput, setBpmInput, state.setBpm, state.bpm, 1, 300)}
           keyboardType="numeric"
-          maxLength={3}
-          selectTextOnFocus
         />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => state.setBpm(state.bpm + 1)}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => state.setBpm(state.bpm + 1)}>
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
@@ -339,27 +298,11 @@ export const Transport: React.FC = () => {
         <TextInput
           style={styles.input}
           value={barsInput}
-          onChangeText={(value) =>
-            handleInputChange(value, setBarsInput, state.setBars, 1, 64)
-          }
-          onBlur={() =>
-            handleInputBlur(
-              barsInput,
-              setBarsInput,
-              state.setBars,
-              state.bars,
-              1,
-              64,
-            )
-          }
+          onChangeText={(value) => handleInputChange(value, setBarsInput, state.setBars, 1, 64)}
+          onBlur={() => handleInputBlur(barsInput, setBarsInput, state.setBars, state.bars, 1, 64)}
           keyboardType="numeric"
-          maxLength={2}
-          selectTextOnFocus
         />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => state.setBars(state.bars + 1)}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => state.setBars(state.bars + 1)}>
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
@@ -379,13 +322,7 @@ export const Transport: React.FC = () => {
           style={styles.input}
           value={minNoteInput}
           onChangeText={(value) =>
-            handleInputChange(
-              value,
-              setMinNoteInput,
-              state.setMinNote,
-              0,
-              state.maxNote - 1,
-            )
+            handleInputChange(value, setMinNoteInput, state.setMinNote, 0, state.maxNote - 1)
           }
           onBlur={() =>
             handleInputBlur(
@@ -394,18 +331,14 @@ export const Transport: React.FC = () => {
               state.setMinNote,
               state.minNote,
               0,
-              state.maxNote - 1,
+              state.maxNote - 1
             )
           }
           keyboardType="numeric"
-          maxLength={3}
-          selectTextOnFocus
         />
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            state.setMinNote(Math.min(state.maxNote - 1, state.minNote + 1))
-          }
+          onPress={() => state.setMinNote(Math.min(state.maxNote - 1, state.minNote + 1))}
         >
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
@@ -415,9 +348,7 @@ export const Transport: React.FC = () => {
         <Text style={styles.label}>Max Note:</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            state.setMaxNote(Math.max(state.minNote + 1, state.maxNote - 1))
-          }
+          onPress={() => state.setMaxNote(Math.max(state.minNote + 1, state.maxNote - 1))}
         >
           <Text style={styles.buttonText}>-</Text>
         </TouchableOpacity>
@@ -425,13 +356,7 @@ export const Transport: React.FC = () => {
           style={styles.input}
           value={maxNoteInput}
           onChangeText={(value) =>
-            handleInputChange(
-              value,
-              setMaxNoteInput,
-              state.setMaxNote,
-              state.minNote + 1,
-              127,
-            )
+            handleInputChange(value, setMaxNoteInput, state.setMaxNote, state.minNote + 1, 127)
           }
           onBlur={() =>
             handleInputBlur(
@@ -440,12 +365,10 @@ export const Transport: React.FC = () => {
               state.setMaxNote,
               state.maxNote,
               state.minNote + 1,
-              127,
+              127
             )
           }
           keyboardType="numeric"
-          maxLength={3}
-          selectTextOnFocus
         />
         <TouchableOpacity
           style={styles.button}
@@ -457,15 +380,10 @@ export const Transport: React.FC = () => {
 
       <View style={styles.controlRow}>
         <TouchableOpacity
-          style={[
-            styles.controlButton,
-            state.playing ? styles.activeButton : {},
-          ]}
-          onPress={() => transportService.playToggle(state)}
+          style={[styles.controlButton, state.playing ? styles.activeButton : {}]}
+          onPress={() => transportService.playToggle()}
         >
-          <Text style={styles.controlButtonText}>
-            {state.playing ? "Stop" : "Play"}
-          </Text>
+          <Text style={styles.controlButtonText}>{state.playing ? 'Stop' : 'Play'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -473,7 +391,7 @@ export const Transport: React.FC = () => {
           onPress={() => {
             state.setActiveScene(state.minNote);
             if (state.playing) {
-              transportService.restart(state);
+              transportService.restart();
             }
           }}
         >
@@ -481,10 +399,7 @@ export const Transport: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[
-            styles.controlButton,
-            state.repeat ? styles.activeButton : {},
-          ]}
+          style={[styles.controlButton, state.repeat ? styles.activeButton : {}]}
           onPress={() => state.setRepeat(!state.repeat)}
         >
           <Text style={styles.controlButtonText}>Repeat</Text>
@@ -497,143 +412,137 @@ export const Transport: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     borderRadius: 8,
     marginBottom: 16,
   },
   sceneContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#e0e0e0",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#e0e0e0',
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
   },
   sceneLabel: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 4,
   },
   sceneValueContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   sceneValue: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#4CAF50",
+    fontWeight: 'bold',
+    color: '#4CAF50',
     marginRight: 8,
   },
   nextSceneValue: {
-    color: "#FF9800", // Orange color for next scene
+    color: '#FF9800', // Orange color for next scene
   },
   sceneNoteName: {
     fontSize: 16,
-    color: "#666",
+    color: '#666',
   },
   progressBarContainer: {
     height: 24,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: '#e0e0e0',
     borderRadius: 12,
     marginBottom: 16,
-    overflow: "hidden",
-    position: "relative",
+    overflow: 'hidden',
+    position: 'relative',
   },
   progressBar: {
-    height: "100%",
-    backgroundColor: "#4CAF50",
+    height: '100%',
+    backgroundColor: '#4CAF50',
     borderRadius: 12,
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     top: 0,
   },
   progressText: {
-    position: "absolute",
-    width: "100%",
-    textAlign: "center",
+    position: 'absolute',
+    width: '100%',
+    textAlign: 'center',
     lineHeight: 24,
-    color: "#333",
-    fontWeight: "bold",
+    color: '#333',
+    fontWeight: 'bold',
     fontSize: 12,
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   label: {
     width: 80,
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  value: {
-    width: 50,
-    textAlign: "center",
-    fontSize: 16,
+    fontWeight: 'bold',
   },
   input: {
     width: 50,
     height: 40,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 4,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16,
-    paddingHorizontal: 4,
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   button: {
     width: 40,
     height: 40,
-    backgroundColor: "#ddd",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 20,
     marginHorizontal: 8,
   },
   buttonText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   controlRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 16,
   },
   controlButton: {
     flex: 1,
-    backgroundColor: "#ddd",
+    backgroundColor: '#ddd',
     padding: 12,
     borderRadius: 4,
     marginHorizontal: 4,
-    alignItems: "center",
+    alignItems: 'center',
   },
   activeButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
   controlButtonText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   barIndicatorsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: 12,
     paddingHorizontal: 8,
   },
   barContainer: {
     margin: 4,
-    alignItems: "center",
+    alignItems: 'center',
   },
   barLabel: {
     fontSize: 10,
     marginBottom: 2,
-    color: "#666",
+    color: '#666',
   },
   beatContainer: {
-    flexDirection: "row",
-    backgroundColor: "#e0e0e0",
+    flexDirection: 'row',
+    backgroundColor: '#e0e0e0',
     borderRadius: 4,
     padding: 2,
   },
@@ -641,10 +550,10 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 2,
-    backgroundColor: "#ccc",
+    backgroundColor: '#ccc',
     margin: 2,
   },
   activeBeatIndicator: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
 });

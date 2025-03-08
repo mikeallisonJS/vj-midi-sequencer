@@ -1,0 +1,19 @@
+# Build artifacts
+node_modules/
+dist/
+build/
+.expo/
+
+# Generated files
+*.generated.*
+
+# Platform-specific files
+android/
+ios/
+
+# Configuration files
+*.config.js
+*.config.ts
+
+# Other
+.git/

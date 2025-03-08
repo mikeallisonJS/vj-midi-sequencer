@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import type React from 'react';
+import { type ReactNode, createContext, useContext, useState } from 'react';
 
 interface StateContextType {
   activeScene: number;
@@ -27,17 +28,15 @@ interface StateContextType {
 
 const StateContext = createContext<StateContextType | undefined>(undefined);
 
-export const StateProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const StateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [activeScene, setActiveScene] = useState<number>(30); // Default to minNote
   const [bars, setBars] = useState<number>(32);
   const [bpm, setBpm] = useState<number>(174);
   const [direction, setDirection] = useState<number>(0);
   const [loop, setLoop] = useState<boolean>(false);
   const [maxNote, setMaxNote] = useState<number>(80);
-  const [midiInPort, setMidiInPort] = useState<string>("Maschine jam - 1");
-  const [midiOutPort, setMidiOutPort] = useState<string>("MIDI In");
+  const [midiInPort, setMidiInPort] = useState<string>('Maschine jam - 1');
+  const [midiOutPort, setMidiOutPort] = useState<string>('MIDI In');
   const [minNote, setMinNote] = useState<number>(30);
   const [playing, setPlaying] = useState<boolean>(false);
   const [repeat, setRepeat] = useState<boolean>(true);
@@ -77,7 +76,7 @@ export const StateProvider: React.FC<{ children: ReactNode }> = ({
 export const useStateContext = (): StateContextType => {
   const context = useContext(StateContext);
   if (context === undefined) {
-    throw new Error("useStateContext must be used within a StateProvider");
+    throw new Error('useStateContext must be used within a StateProvider');
   }
   return context;
 };

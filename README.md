@@ -53,6 +53,24 @@ npm run android
 npm run web
 ```
 
+## Development
+
+### Code Quality with Biome
+
+This project uses [Biome](https://biomejs.dev/) for linting and formatting. Biome is a fast, modern linter and formatter for JavaScript and TypeScript.
+
+#### Available Scripts
+
+- `npm run lint` - Check for linting issues
+- `npm run lint:fix` - Fix linting issues
+- `npm run format` - Check for formatting issues
+- `npm run format:fix` - Fix formatting issues
+- `npm run check:all` - Run both linting and formatting checks and apply fixes
+
+#### VS Code Integration
+
+If you're using VS Code, the project includes settings to automatically format code on save using Biome. Make sure to install the [Biome VS Code extension](https://marketplace.visualstudio.com/items?itemName=biomejs.biome).
+
 ## MIDI Implementation
 
 The MIDI implementation in React Native differs from the original Angular/Electron version. This version uses the `react-native-midi` library for MIDI functionality.

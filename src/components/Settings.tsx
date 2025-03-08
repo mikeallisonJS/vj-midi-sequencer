@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import type React from 'react';
+import { useState } from 'react';
 import {
-  View,
+  Modal,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Modal,
-  ScrollView,
-} from "react-native";
-import { useStateContext } from "../context/StateContext";
-import { MidiService } from "../services/MidiService";
+  View,
+} from 'react-native';
+import { MidiService } from '../services/MidiService';
+import { useStore } from '../store/useStore';
 
 interface SettingsProps {
   visible: boolean;
@@ -17,7 +18,7 @@ interface SettingsProps {
 }
 
 export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
-  const state = useStateContext();
+  const state = useStore();
   const [midiService] = useState(() => new MidiService());
   const [midiInPort, setMidiInPort] = useState(state.midiInPort);
   const [midiOutPort, setMidiOutPort] = useState(state.midiOutPort);
@@ -30,12 +31,7 @@ export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalTitle}>Settings</Text>
@@ -65,16 +61,10 @@ export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
           </ScrollView>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonCancel]}
-              onPress={onClose}
-            >
+            <TouchableOpacity style={[styles.button, styles.buttonCancel]} onPress={onClose}>
               <Text style={styles.textStyle}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonSave]}
-              onPress={handleSave}
-            >
+            <TouchableOpacity style={[styles.button, styles.buttonSave]} onPress={handleSave}>
               <Text style={styles.textStyle}>Save</Text>
             </TouchableOpacity>
           </View>
@@ -87,17 +77,17 @@ export const Settings: React.FC<SettingsProps> = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    width: "80%",
-    maxHeight: "80%",
-    backgroundColor: "white",
+    width: '80%',
+    maxHeight: '80%',
+    backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -108,9 +98,9 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
   },
   scrollView: {
     maxHeight: 400,
@@ -121,18 +111,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 20,
   },
   button: {
@@ -143,14 +133,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   buttonCancel: {
-    backgroundColor: "#9e9e9e",
+    backgroundColor: '#9e9e9e',
   },
   buttonSave: {
-    backgroundColor: "#2196F3",
+    backgroundColor: '#2196F3',
   },
   textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

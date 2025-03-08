@@ -1,21 +1,59 @@
-import { Platform } from "react-native";
-import { useStateContext } from "../context/StateContext";
-import { requestMIDIAccess } from "@motiz88/react-native-midi";
+import { requestMIDIAccess } from '@motiz88/react-native-midi';
+import { useStore } from '../store/useStore';
 
-// Note: React Native MIDI implementation will be different from the web/Electron version
-// This is a simplified version that will need to be adapted based on the available MIDI libraries for React Native
+// Define proper types for MIDI interfaces
+interface MIDIPort {
+  id: string;
+  name: string;
+  manufacturer: string;
+  state: string;
+  type: string;
+  version: string;
+  connection: string;
+}
 
+interface MIDIInput extends MIDIPort {
+  onmidimessage: ((event: MIDIMessageEvent) => void) | null;
+}
+
+interface MIDIOutput extends MIDIPort {
+  send: (data: number[], timestamp?: number) => void;
+  clear: () => void;
+}
+
+interface MIDIMessageEvent {
+  data: Uint8Array;
+  timeStamp: number;
+}
+
+interface MIDIAccess {
+  inputs: Map<string, MIDIInput>;
+  outputs: Map<string, MIDIOutput>;
+  onstatechange: ((event: MIDIConnectionEvent) => void) | null;
+}
+
+interface MIDIConnectionEvent {
+  port: MIDIPort;
+  timeStamp: number;
+}
+
+export const keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+export const octaves = ['-2', '-1', '0', '1', '2', '3', '4', '5', '6', '7', '8'];
+
+export function buildNoteList(): string[] {
+  const notes: string[] = [];
+  for (let i = 0; i < 128; i++) {
+    notes.push(keys[i % keys.length] + octaves[Math.floor((i + 3) / keys.length)]);
+  }
+  return notes;
+}
 export class MidiService {
-  keys = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-  octaves = ["-2", "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8"];
-  notesArray: string[];
-  midiAccess: any;
-  midiInputs: Map<string, any>;
-  midiOutputs: Map<string, any>;
-  selectedOutput: any;
+  midiAccess: MIDIAccess | null = null;
+  midiInputs: Map<string, MIDIInput>;
+  midiOutputs: Map<string, MIDIOutput>;
+  selectedOutput: MIDIOutput | null = null;
 
   constructor() {
-    this.notesArray = this.buildNoteList();
     this.midiInputs = new Map();
     this.midiOutputs = new Map();
     this.reset();
@@ -23,19 +61,19 @@ export class MidiService {
 
   async getInfo() {
     try {
-      this.midiAccess = await requestMIDIAccess();
+      this.midiAccess = (await requestMIDIAccess()) as unknown as MIDIAccess;
 
       // Clear existing maps
       this.midiInputs.clear();
       this.midiOutputs.clear();
 
       // Populate inputs
-      this.midiAccess.inputs.forEach((input: any, id: string) => {
+      this.midiAccess.inputs.forEach((input: MIDIInput, id: string) => {
         this.midiInputs.set(id, input);
       });
 
       // Populate outputs
-      this.midiAccess.outputs.forEach((output: any, id: string) => {
+      this.midiAccess.outputs.forEach((output: MIDIOutput, id: string) => {
         this.midiOutputs.set(id, output);
       });
 
@@ -44,20 +82,9 @@ export class MidiService {
         outputs: Array.from(this.midiOutputs.values()),
       };
     } catch (error) {
-      console.error("Failed to get MIDI access:", error);
+      console.error('Failed to get MIDI access:', error);
       return { inputs: [], outputs: [] };
     }
-  }
-
-  buildNoteList(): string[] {
-    const notes: string[] = [];
-    for (let i = 0; i < 128; i++) {
-      notes.push(
-        this.keys[i % this.keys.length] +
-          this.octaves[Math.floor((i + 3) / this.keys.length)]
-      );
-    }
-    return notes;
   }
 
   close(): void {
@@ -74,7 +101,9 @@ export class MidiService {
 
       // Note off after 100ms
       setTimeout(() => {
-        this.selectedOutput.send([0x80 + channel, note, 0]);
+        if (this.selectedOutput) {
+          this.selectedOutput.send([0x80 + channel, note, 0]);
+        }
       }, 100);
     }
   }
@@ -82,9 +111,15 @@ export class MidiService {
   async reset(): Promise<void> {
     try {
       const midiInfo = await this.getInfo();
-      console.log("MIDI devices found:", midiInfo);
+      console.log('MIDI devices found:', midiInfo);
+
+      // Get the current MIDI output port from the store
+      const { midiOutPort } = useStore.getState();
+      if (midiOutPort) {
+        await this.changeOutputPort(midiOutPort);
+      }
     } catch (error) {
-      console.error("Error initializing MIDI:", error);
+      console.error('Error initializing MIDI:', error);
     }
   }
 
@@ -98,6 +133,9 @@ export class MidiService {
       if (output.name === portName) {
         this.selectedOutput = output;
         console.log(`Changed MIDI output to: ${portName}`);
+
+        // Update the store with the selected port
+        useStore.getState().setMidiOutPort(portName);
         return;
       }
     }

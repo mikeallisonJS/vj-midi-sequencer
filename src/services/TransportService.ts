@@ -1,8 +1,8 @@
-import { MidiService } from "./MidiService";
-import { useStateContext } from "../context/StateContext";
+import { useStore } from '../store/useStore';
+import type { MidiService } from './MidiService';
 
-// Define a type alias for the return type of useStateContext
-type State = ReturnType<typeof useStateContext>;
+// Define a type for the store state
+type State = ReturnType<typeof useStore.getState>;
 
 export class TransportService {
   private midiService: MidiService;
@@ -33,17 +33,20 @@ export class TransportService {
     this.beatChangeListener = null;
   }
 
-  public playToggle(state: State): void {
-    if (state.playing) {
+  public playToggle(): void {
+    const state = useStore.getState();
+    const { playing, setPlaying } = state;
+
+    if (playing) {
       this.stopBeats();
-      state.setPlaying(false);
+      setPlaying(false);
     } else {
-      this.startBeats(state);
-      state.setPlaying(true);
+      this.startBeats();
+      setPlaying(true);
     }
   }
 
-  public restart(state: State): void {
+  public restart(): void {
     this.stopBeats();
     this.currentBeat = 0;
     this.currentBar = 0;
@@ -57,23 +60,31 @@ export class TransportService {
       this.beatChangeListener(this.currentBeat);
     }
 
-    this.startBeats(state);
+    const state = useStore.getState();
+    if (!state.playing) {
+      state.setPlaying(true);
+    }
+    this.startBeats();
   }
 
-  private startBeats(state: State): void {
+  private startBeats(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
 
+    const state = useStore.getState();
     // Calculate beat duration in milliseconds (60000ms / BPM = ms per beat)
     const beatDuration = 60000 / state.bpm;
 
     // Play the first note immediately
     if (this.currentBeat === 0) {
-      this.playNote(state);
+      this.playNote();
     }
 
     this.intervalId = setInterval(() => {
+      // Get the latest state
+      const currentState = useStore.getState();
+
       // Increment beat
       this.currentBeat = (this.currentBeat + 1) % 4;
 
@@ -85,7 +96,7 @@ export class TransportService {
       // If we've completed a bar
       if (this.currentBeat === 0) {
         // Increment bar within the sequence
-        this.currentBar = (this.currentBar + 1) % state.bars;
+        this.currentBar = (this.currentBar + 1) % currentState.bars;
 
         // Notify bar change
         if (this.barChangeListener) {
@@ -94,19 +105,17 @@ export class TransportService {
 
         // Increment the overall bar counter for scene progression
         this.barCounter++;
-        console.log(
-          `Bar counter: ${this.barCounter}, Bars per scene: ${state.bars}`,
-        );
+        console.log(`Bar counter: ${this.barCounter}, Bars per scene: ${currentState.bars}`);
 
         // Check if we need to progress to the next scene
         // The key fix: We need to check if we've completed a full cycle of bars
-        if (this.barCounter >= state.bars) {
+        if (this.barCounter >= currentState.bars) {
           this.barCounter = 0; // Reset bar counter
-          this.progressScene(state); // Progress to next scene
+          this.progressScene(); // Progress to next scene
         }
 
         // Play note at the start of each bar
-        this.playNote(state);
+        this.playNote();
       }
     }, beatDuration);
   }
@@ -118,13 +127,15 @@ export class TransportService {
     }
   }
 
-  private playNote(state: State): void {
+  private playNote(): void {
+    const state = useStore.getState();
     // Play the current scene note
     this.midiService.playNote(state.activeScene, 0);
     console.log(`Playing note: ${state.activeScene}`);
   }
 
-  private progressScene(state: State): void {
+  private progressScene(): void {
+    const state = useStore.getState();
     // Progress to the next scene
     if (state.activeScene >= state.maxNote) {
       // If we've reached the max note, either loop back to min or stay at max

@@ -8,7 +8,6 @@ import {
   ScrollView,
   StatusBar,
 } from "react-native";
-import { StateProvider } from "./src/context/StateContext";
 import { Transport } from "./src/components/Transport";
 import { Scenes } from "./src/components/Scenes";
 import { Effects } from "./src/components/Effects";
@@ -25,43 +24,41 @@ export default function App() {
   };
 
   return (
-    <StateProvider>
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
 
-        <View style={styles.header}>
-          <Text style={styles.title}>VJ MIDI Sequencer</Text>
-          <View style={styles.headerButtons}>
-            <TouchableOpacity style={styles.iconButton} onPress={handlePanic}>
-              <Text style={styles.iconText}>!</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => setSettingsVisible(true)}
-            >
-              <Text style={styles.iconText}>⚙️</Text>
-            </TouchableOpacity>
-          </View>
+      <View style={styles.header}>
+        <Text style={styles.title}>VJ MIDI Sequencer</Text>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity style={styles.iconButton} onPress={handlePanic}>
+            <Text style={styles.iconText}>!</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => setSettingsVisible(true)}
+          >
+            <Text style={styles.iconText}>⚙️</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView style={styles.content}>
+        <Transport />
+
+        <View style={styles.row}>
+          <Scenes />
         </View>
 
-        <ScrollView style={styles.content}>
-          <Transport />
+        <View style={styles.row}>
+          <Effects />
+        </View>
+      </ScrollView>
 
-          <View style={styles.row}>
-            <Scenes />
-          </View>
-
-          <View style={styles.row}>
-            <Effects />
-          </View>
-        </ScrollView>
-
-        <Settings
-          visible={settingsVisible}
-          onClose={() => setSettingsVisible(false)}
-        />
-      </SafeAreaView>
-    </StateProvider>
+      <Settings
+        visible={settingsVisible}
+        onClose={() => setSettingsVisible(false)}
+      />
+    </SafeAreaView>
   );
 }
 
